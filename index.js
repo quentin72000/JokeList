@@ -1,4 +1,4 @@
-const { api_key, debug} = require('./config.json')
+const { api_key, debug, export_format} = require('./config.json')
 const BlaguesAPI = require('blagues-api');
 const blagues = new BlaguesAPI(api_key);
 const fs = require('fs');
@@ -51,7 +51,8 @@ const getAllJoke = async () => {
 					}
 				}else{
 					var jokeReaded = fs.readFileSync(jokeFileName, 'utf8');
-					fs.writeFileSync(jokeFileName, `${jokeReaded}\n${reponse.joke} : ${reponse.answer} (id: ${reponse.id}, type: ${reponse.type})`, {encoding: 'utf8', flags: 'wx'});
+					// fs.writeFileSync(jokeFileName, `${jokeReaded}\n${reponse.joke} : ${reponse.answer} (id: ${reponse.id}, type: ${reponse.type})`, {encoding: 'utf8', flags: 'wx'});
+					fs.writeFileSync(jokeFileName, jokeReaded + "\n" + export_format.replace("%joke%", reponse.joke).replace("%answer%",reponse.answer).replace("%id%", reponse.id).replace("%type%", reponse.type), {encoding: 'utf8', flags: 'wx'});
 					jokeNumberReaded++;
 					console.log(i);
 				if(debug){
@@ -59,7 +60,7 @@ const getAllJoke = async () => {
 				}
 
 				}
-				//sleep(3)
+				sleep(3)
 		} catch (err) {
 			console.error("Une erreur est survenue.")
 			console.error(err)
