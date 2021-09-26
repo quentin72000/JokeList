@@ -1,4 +1,5 @@
 {
 	"api_key": "YOUR_API_KEY",
-	"debug": false
+	"debug": false,
+	"export_format": "%joke%: %answer% (id: %id%, type: %type%)"
 }

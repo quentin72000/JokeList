@@ -79,3 +79,5 @@ typings/
 config.json
 package-lock.json
 results/*
+.eslintrc.json
+test.js
