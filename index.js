@@ -72,10 +72,10 @@ const getAllJoke = async () => {
 
 			if (reponse.status === 404) { // if joke is not found, add 1 to notFoundJokeNumber
 				notFoundJokeNumber++;
-				console.log("Blague non trouvé (" + (i + 1) + "), nombre de blague non trouvé: " + notFoundJokeNumber);
+				console.log("Jokes not found (" + i + "), number of jokes not found: " + notFoundJokeNumber);
 				if (notFoundJokeNumber === 5) { // if joke number not found is 5, stop the process
 					let now = moment()
-					console.log("Done ! Readed " + jokeNumberReaded + " blagues, finished in " + moment(now.diff(date)).format("mm [minutes et ] ss [secondes]"));
+					console.log("Done ! Readed " + jokeNumberReaded + " jokes, finished in " + moment(now.diff(date)).format("mm [minutes and ] ss [secondes]"));
 					break;
 				}
 			} else {
@@ -94,7 +94,7 @@ const getAllJoke = async () => {
 			}
 			sleep(3)
 		} catch (err) {
-			console.error("Une erreur est survenue.")
+			console.error("An error has occurred.")
 			console.error(err)
 			process.exit(1)
 		}
@@ -118,12 +118,11 @@ const getAllJokeCategories = async (type) => {
 			
 
 			if (reponse.status === 404) { // if joke is not found, add 1 to notFoundJokeNumber
-				console.log("not found")
 				notFoundJokeNumber++;
-				console.log("Blague non trouvé (" + (i + 1) + "), nombre de blague non trouvé: " + notFoundJokeNumber);
+				console.log("Jokes not found (" + i + "), number of jokes not found: " + notFoundJokeNumber);
 				if (notFoundJokeNumber === 5) { // if joke number not found is 5, stop the process
 					let now = moment()
-					console.log("Done ! Readed " + jokeNumberReaded + " jokes, finished in " + moment(now.diff(date)).format("mm [minutes et ] ss [secondes]"));
+					console.log("Done ! Readed " + jokeNumberReaded + " jokes, finished in " + moment(now.diff(date)).format("mm [minutes and ] ss [secondes]"));
 					break;
 				}
 			} else {
@@ -144,7 +143,7 @@ const getAllJokeCategories = async (type) => {
 			sleep(3)
 			}
 		} catch (err) {
-			console.error("Une erreur est survenue.")
+			console.error("An error has occurred.")
 			console.error(err)
 			process.exit(1)
 		}
