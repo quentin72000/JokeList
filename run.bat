@@ -1,0 +1,3 @@
+@echo on
+echo launching...
+node index.js
