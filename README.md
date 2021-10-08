@@ -5,7 +5,8 @@
 
 ## Installation
 Download files
-Run `npm install`
+
+Run the file `setup.bat` (rename it to "setup.sh"if you use linux or Mac)
 
 ## Configuration
 Rename the file `config.json.example` to `config.json`
@@ -17,7 +18,7 @@ Rename the file `config.json.example` to `config.json`
 
 ## Launch
 
-Run `node index.js`
+Run the file `run.bat` (rename it to "run.sh"if you use linux or Mac)
 
 
 ## If you have an issue or want to contribute feel free to make an issue!
