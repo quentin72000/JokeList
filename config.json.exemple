@@ -1,5 +1,6 @@
 {
 	"api_key": "YOUR_API_KEY",
 	"debug": false,
+	"output_type": "JSON",
 	"export_format": "%joke%: %answer% (id: %id%, type: %type%)"
 }

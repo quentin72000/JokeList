@@ -1,9 +1,9 @@
-const {api_key, debug, export_format} = require('./config.json')
+const {api_key, debug, output_type, export_format} = require('./config.json')
 const BlaguesAPI = require('blagues-api');
 const blagues = new BlaguesAPI(api_key);
 const fs = require('fs');
 const moment = require('moment');
-const prompts = require('prompts')
+const prompts = require('prompts');
 
 
 const start = (async () => {
@@ -15,7 +15,7 @@ const start = (async () => {
 		choices: [{
 				title: 'ALL',
 				description: 'Return all jokes of all category',
-				value: 'all'
+				value: 'ALL'
 			},
 			{title: "GLOBAL", value: 'global'},
 			{
@@ -64,29 +64,44 @@ const getAllJoke = async () => {
 	let notFoundJokeNumber = 0;
 	let jokeNumberReaded = 0;
 	var date = moment()
-
+	let jokes = []
 	const jokeFileName = createFile()
 	for (let i = 1;; i++) {
 		try {
 			const reponse = await blagues.fromId(i);
-
+			console.log(reponse)
 			if (reponse.status === 404) { // if joke is not found, add 1 to notFoundJokeNumber
 				notFoundJokeNumber++;
 				console.log("Jokes not found (" + i + "), number of jokes not found: " + notFoundJokeNumber);
 				if (notFoundJokeNumber === 5) { // if joke number not found is 5, stop the process
+					if(output_type === "JSON")fs.writeFileSync(jokeFileName, JSON.stringify(jokes))
 					let now = moment()
+
 					console.log("Done ! Readed " + jokeNumberReaded + " jokes, finished in " + moment(now.diff(date)).format("mm [minutes and ] ss [secondes]"));
 					break;
 				}
 			} else {
-				var jokeReaded = fs.readFileSync(jokeFileName, 'utf8');
-				// fs.writeFileSync(jokeFileName, `${jokeReaded}\n${reponse.joke} : ${reponse.answer} (id: ${reponse.id}, type: ${reponse.type})`, {encoding: 'utf8', flags: 'wx'});
-				fs.writeFileSync(jokeFileName, jokeReaded + "\n" + export_format.replace("%joke%", reponse.joke).replace("%answer%", reponse.answer).replace("%id%", reponse.id).replace("%type%", reponse.type), {
-					encoding: 'utf8',
-					flags: 'wx'
-				});
+
+				if(output_type === "JSON"){
+					jokes.push({
+						id: reponse.id,
+						type: reponse.type,
+						content: {
+							blague: reponse.joke,
+							reponse: reponse.answer,
+						}
+					})
+				}else{
+
+					var jokeReaded = fs.readFileSync(jokeFileName, 'utf8');
+					fs.writeFileSync(jokeFileName, `${jokeReaded}\n${reponse.joke} : ${reponse.answer} (id: ${reponse.id}, type: ${reponse.type})`, {encoding: 'utf8', flags: 'wx'});
+					fs.writeFileSync(jokeFileName, jokeReaded + "\n" + export_format.replace("%joke%", reponse.joke).replace("%answer%", reponse.answer).replace("%id%", reponse.id).replace("%type%", reponse.type), {
+						encoding: 'utf8',
+						flags: 'wx'
+					});
+				}
 				jokeNumberReaded++;
-				//console.log(i);
+				console.log(i);
 				if (debug) {
 					console.log(reponse);
 				}
@@ -105,6 +120,7 @@ const getAllJokeCategories = async (type) => {
 	console.log("type:" + type)
 	let notFoundJokeNumber = 0;
 	let jokeNumberReaded = 0;
+	let jokes = [];
 	var date = moment()
 
 	const jokeFileName = createFile(type)
@@ -116,11 +132,13 @@ const getAllJokeCategories = async (type) => {
 			const reponse = await blagues.fromId(i);
 			// console.log(reponse);
 			
+			
 
 			if (reponse.status === 404) { // if joke is not found, add 1 to notFoundJokeNumber
 				notFoundJokeNumber++;
 				console.log("Jokes not found (" + i + "), number of jokes not found: " + notFoundJokeNumber);
 				if (notFoundJokeNumber === 5) { // if joke number not found is 5, stop the process
+					if(output_type === "JSON")fs.writeFileSync(jokeFileName, JSON.stringify(jokes))
 					let now = moment()
 					console.log("Done ! Readed " + jokeNumberReaded + " jokes, finished in " + moment(now.diff(date)).format("mm [minutes and ] ss [secondes]"));
 					break;
@@ -128,12 +146,23 @@ const getAllJokeCategories = async (type) => {
 			} else {
 				if(reponse.type == type){
 					console.log("finded ! Number of jokes finded: " + (jokeNumberReaded +1) + " ID: " + reponse.id)
-				var jokeReaded = fs.readFileSync(jokeFileName, 'utf8');
-				// fs.writeFileSync(jokeFileName, `${jokeReaded}\n${reponse.joke} : ${reponse.answer} (id: ${reponse.id}, type: ${reponse.type})`, {encoding: 'utf8', flags: 'wx'});
-				fs.writeFileSync(jokeFileName, jokeReaded + "\n" + export_format.replace("%joke%", reponse.joke).replace("%answer%", reponse.answer).replace("%id%", reponse.id).replace("%type%", reponse.type), {
-					encoding: 'utf8',
-					flags: 'wx'
-				});
+				if(output_type === "JSON"){
+					jokes.push({
+						id: jokeNumberReaded + 1,
+						type: reponse.type,
+						content: {
+							blague: reponse.joke,
+							reponse: reponse.answer,
+						}
+					})
+				}else {
+					var jokeReaded = fs.readFileSync(jokeFileName, 'utf8');
+					// fs.writeFileSync(jokeFileName, `${jokeReaded}\n${reponse.joke} : ${reponse.answer} (id: ${reponse.id}, type: ${reponse.type})`, {encoding: 'utf8', flags: 'wx'});
+					fs.writeFileSync(jokeFileName, jokeReaded + "\n" + export_format.replace("%joke%", reponse.joke).replace("%answer%", reponse.answer).replace("%id%", reponse.id).replace("%type%", reponse.type), {
+						encoding: 'utf8',
+						flags: 'wx'
+					});
+				}
 				jokeNumberReaded++;
 				if (debug) {
 					console.log(reponse);
@@ -166,6 +195,9 @@ function sleep(milliseconds) {
 
 
 function createFile(suffix){
+	let extension;
+	if(output_type === "JSON") extension = ".json";
+	else extension = ".txt";
 	if (!fs.existsSync("results/")) {
 		fs.mkdirSync("results/")
 	}
@@ -174,11 +206,11 @@ function createFile(suffix){
 	var date = moment()
 	var jokeFileName = "results/" + date.format('YYYY[-]MM[-]DD[-]hh[-]mm')
 	if (fs.existsSync(jokeFileName + ".txt")) {
-		jokeFileName = jokeFileName + "(2)" + addsuffix +".txt"
+		jokeFileName = jokeFileName + "(2)" + addsuffix + extension
 		fs.writeFileSync(jokeFileName, "")
 	} else {
-		jokeFileName = jokeFileName + addsuffix +".txt"
+		jokeFileName = jokeFileName + addsuffix + extension
 		fs.writeFileSync(jokeFileName, "")
 	}
-	return(jokeFileName)
+	return(jokeFileName);
 }
